@@ -22,8 +22,9 @@ public abstract class AbstractPacketWriter extends Writer {
 	}
 
 	@Override
-	public void write(char[] arg0, int arg1, int arg2) throws IOException {
-		writer.write(arg0, arg1, arg2);
+	public void write(char[] cbuf, int off, int len) throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public abstract void writePackets();

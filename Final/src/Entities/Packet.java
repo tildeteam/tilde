@@ -27,6 +27,80 @@ public class Packet implements Instance {
 		
 	}
 
+		
+	
+	public String getProtocol() {
+		return protocol;
+	}
+
+
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+	}
+
+
+
+	public InetAddress getSourceIp() {
+		return sourceIp;
+	}
+
+
+
+	public void setSourceIp(InetAddress sourceIp) {
+		this.sourceIp = sourceIp;
+	}
+
+
+
+	public int getSourcePort() {
+		return sourcePort;
+	}
+
+
+
+	public void setSourcePort(int sourcePort) {
+		this.sourcePort = sourcePort;
+	}
+
+
+
+	public InetAddress getDestinationIp() {
+		return destinationIp;
+	}
+
+
+
+	public void setDestinationIp(InetAddress destinationIp) {
+		this.destinationIp = destinationIp;
+	}
+
+
+
+	public int getDestinationPort() {
+		return destinationPort;
+	}
+
+
+
+	public void setDestinationPort(int destinationPort) {
+		this.destinationPort = destinationPort;
+	}
+
+
+
+	public int getIsAnomaly() {
+		return isAnomaly;
+	}
+
+
+
+	public void setIsAnomaly(int isAnomaly) {
+		this.isAnomaly = isAnomaly;
+	}
+
+
+
 	@Override
 	public Object copy() {
 		
