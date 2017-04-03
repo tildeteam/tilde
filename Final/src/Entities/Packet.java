@@ -27,7 +27,12 @@ public class Packet implements Instance {
 		
 	}
 
+	
+	@Override
+	public String toString() {
 		
+		return protocol+","+sourceIp+","+sourcePort+","+destinationIp+","+destinationPort+","+isAnomaly;
+	}
 	
 	public String getProtocol() {
 		return protocol;

@@ -3,6 +3,8 @@ package infra;
 import java.io.IOException;
 import java.io.Writer;
 
+import Entities.Packet;
+
 public abstract class AbstractPacketWriter extends Writer {
 
 	private Writer writer;
@@ -21,12 +23,14 @@ public abstract class AbstractPacketWriter extends Writer {
 		writer.flush();
 	}
 
+	
+	public abstract void writePackets(Packet[] p);
+	
+	
 	@Override
-	public void write(char[] cbuf, int off, int len) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void write(char[] cbuf, int off, int len) throws IOException
+	{
+		writer.write(cbuf, off, len);
 	}
-
-	public abstract void writePackets();
 
 }
