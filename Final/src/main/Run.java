@@ -31,11 +31,11 @@ public class Run {
 			
 			
 			List<Packet> packetsToWrite = Arrays.asList(
-					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0),
-					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0),
-					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 1),
-					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0),
-					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0)
+					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0),
+					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0),
+					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 1),
+					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0),
+					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0)
 					);
 			WekaPacketWriter writer = new WekaPacketWriter("TestProject",new BufferedWriter(new FileWriter("assets/writeToMe.txt")), 
 					PacketFields.PROTOCOL,
@@ -46,7 +46,7 @@ public class Run {
 					PacketFields.IS_ANOMALY);
 			
 			
-			writer.writePackets(packetsToWrite);
+			writer.writePackets(packetsRead);
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {

@@ -10,14 +10,14 @@ import weka.core.Instances;
 
 public class Packet implements Instance {
 	private String protocol;
-	private InetAddress sourceIp;
+	private String sourceIp;
 	private int sourcePort;
-	private InetAddress destinationIp;
+	private String destinationIp;
 	private int destinationPort;
 	private int isAnomaly;	//1 for anomaly 0 for normal
 	
 	
-	public Packet(String protocol,InetAddress s_ip ,int s_port, InetAddress d_ip, int d_port,int isAnonaly) {
+	public Packet(String protocol,String s_ip ,int s_port, String d_ip, int d_port,int isAnonaly) {
 		this.protocol = protocol;
 		this.sourceIp = s_ip;
 		this.sourcePort = s_port;
@@ -46,13 +46,13 @@ public class Packet implements Instance {
 
 
 
-	public InetAddress getSourceIp() {
+	public String getSourceIp() {
 		return sourceIp;
 	}
 
 
 
-	public void setSourceIp(InetAddress sourceIp) {
+	public void setSourceIp(String sourceIp) {
 		this.sourceIp = sourceIp;
 	}
 
@@ -70,13 +70,13 @@ public class Packet implements Instance {
 
 
 
-	public InetAddress getDestinationIp() {
+	public String getDestinationIp() {
 		return destinationIp;
 	}
 
 
 
-	public void setDestinationIp(InetAddress destinationIp) {
+	public void setDestinationIp(String destinationIp) {
 		this.destinationIp = destinationIp;
 	}
 

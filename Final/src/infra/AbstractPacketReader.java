@@ -1,5 +1,6 @@
 package infra;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
@@ -8,9 +9,9 @@ import Entities.Packet;
 
 public abstract class AbstractPacketReader extends Reader{
 	
-	private Reader reader;
+	private BufferedReader reader;
 	
-	public AbstractPacketReader(Reader reader) {
+	public AbstractPacketReader( BufferedReader reader) {
 		this.reader = reader;
 		
 	}
@@ -32,6 +33,13 @@ public abstract class AbstractPacketReader extends Reader{
 		return reader.read(cbuf, off, len);
 		
 	}
+	
+	
+	
+	public BufferedReader getReader() {
+		return reader;
+	}
+	
 	
 	
 }
