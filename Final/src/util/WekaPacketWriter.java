@@ -3,6 +3,7 @@ package util;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.List;
 
 import Entities.Packet;
 import Entities.PacketFields;
@@ -23,7 +24,7 @@ public class WekaPacketWriter extends AbstractPacketWriter {
 	}
 
 	@Override
-	public void writePackets(Packet[] packets) {
+	public void writePackets(List<Packet> packets) {
 		try {
 			write("@RELATION " + projectName + "\n\n");
 		} catch (IOException e1) {

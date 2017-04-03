@@ -1,6 +1,8 @@
 package util;
 import java.io.Reader;
+import java.util.List;
 
+import Entities.Packet;
 import infra.AbstractPacketReader;
 
 public class WireSharkPacketReader extends AbstractPacketReader {
@@ -10,7 +12,7 @@ public class WireSharkPacketReader extends AbstractPacketReader {
 	}
 
 	@Override
-	public int readPackets() {
+	public int readPackets(List<Packet> packets) {
 		
 		return 0;
 	}

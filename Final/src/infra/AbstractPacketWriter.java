@@ -2,6 +2,7 @@ package infra;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 import Entities.Packet;
 
@@ -24,7 +25,7 @@ public abstract class AbstractPacketWriter extends Writer {
 	}
 
 	
-	public abstract void writePackets(Packet[] p);
+	public abstract void writePackets(List<Packet> p);
 	
 	
 	@Override
