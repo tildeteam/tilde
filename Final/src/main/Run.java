@@ -37,7 +37,7 @@ public class Run {
 					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0),
 					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0)
 					);
-			WekaPacketWriter writer = new WekaPacketWriter("TestProject",new BufferedWriter(new FileWriter("assets/writeToMe.txt")), 
+			WekaPacketWriter writer = new WekaPacketWriter("TestProject",new BufferedWriter(new FileWriter("assets/writeToMe.arff")), 
 					PacketFields.PROTOCOL,
 					PacketFields.SOURCE_IP,
 					PacketFields.SOURCE_PORT,
