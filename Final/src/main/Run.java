@@ -23,19 +23,20 @@ public class Run {
 		try {
 			int numOfPacketsRead;
 			List<Packet> packetsRead = new ArrayList<Packet>();
-			List<Packet> packetsToWrite = Arrays.asList(
-								new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0),
-								new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0),
-								new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 1),
-								new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0),
-								new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0)
-								);
 			
 			WireSharkPacketReader reader = new WireSharkPacketReader(new BufferedReader(new FileReader("assets/readFromMe.txt")));
 			numOfPacketsRead = reader.readPackets(packetsRead);
 			System.out.println(numOfPacketsRead);
 			
 			
+			
+			List<Packet> packetsToWrite = Arrays.asList(
+					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0),
+					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0),
+					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 1),
+					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0),
+					new Packet("http", InetAddress.getLocalHost(), 8080, InetAddress.getByName("google.com"), 8080, 0)
+					);
 			WekaPacketWriter writer = new WekaPacketWriter("TestProject",new BufferedWriter(new FileWriter("assets/writeToMe.txt")), 
 					PacketFields.PROTOCOL,
 					PacketFields.SOURCE_IP,
