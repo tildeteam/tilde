@@ -1,6 +1,5 @@
 package Entities;
 
-import java.net.InetAddress;
 import java.util.Enumeration;
 
 import weka.core.Attribute;
