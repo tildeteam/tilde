@@ -31,11 +31,11 @@ public class Run {
 			
 			
 			List<Packet> packetsToWrite = Arrays.asList(
-					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0),
-					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0),
-					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 1),
-					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0),
-					new Packet("http", "127.0.0.1", 8080, "194.0.0.4", 8080, 0)
+					new Packet("http", 127,0,0,1, 8080, 194,0,0,4, 8080, 0),
+					new Packet("TCP", 127,0,0,1, 8080, 194,0,0,4, 8080, 0),
+					new Packet("UDP", 127,0,0,1, 8080, 194,0,0,4, 8080, 0),
+					new Packet("http", 127,0,0,1, 8080, 194,0,0,4, 8080, 0),
+					new Packet("http", 127,0,0,1, 8080, 194,0,0,4, 8080, 0)
 					);
 			WekaPacketWriter writer = new WekaPacketWriter("TestProject",new BufferedWriter(new FileWriter("assets/writeToMe.arff")), 
 					PacketFields.PROTOCOL,

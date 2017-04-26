@@ -1,119 +1,170 @@
 package Entities;
 
 import java.util.Enumeration;
+import java.util.LinkedList;
 
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 
-
 public class Packet implements Instance {
 	private String protocol;
-	private String sourceIp;
+	private int sourceIp1;
+	private int sourceIp2;
+	private int sourceIp3;
+	private int sourceIp4;
 	private int sourcePort;
-	private String destinationIp;
+	private int destinationIp1;
+	private int destinationIp2;
+	private int destinationIp3;
+	private int destinationIp4;
 	private int destinationPort;
-	private int isAnomaly;	//1 for anomaly 0 for normal
-	
-	
-	public Packet(String protocol,String s_ip ,int s_port, String d_ip, int d_port,int isAnonaly) {
+	private int isAnomaly; // 1 for anomaly 0 for normal
+
+	public Packet(String protocol, int s_ip1, int s_ip2, int s_ip3, int s_ip4, int s_port, int d_ip1, int d_ip2,
+			int d_ip3, int d_ip4, int d_port, int isAnonaly) {
 		this.protocol = protocol;
-		this.sourceIp = s_ip;
+		this.sourceIp1 = s_ip1;
+		this.sourceIp2 = s_ip2;
+		this.sourceIp3 = s_ip3;
+		this.sourceIp4 = s_ip4;
 		this.sourcePort = s_port;
-		this.destinationIp = d_ip;
+		this.destinationIp1 = d_ip1;
+		this.destinationIp2 = d_ip2;
+		this.destinationIp3 = d_ip3;
+		this.destinationIp4 = d_ip4;
 		this.destinationPort = d_port;
 		this.isAnomaly = isAnonaly;
-		
+
 	}
 
-	
 	@Override
 	public String toString() {
-		
-		return protocol+","+sourceIp+","+sourcePort+","+destinationIp+","+destinationPort+","+isAnomaly;
+
+		return protocol + "," + sourceIp1 + "," + sourceIp2 + "," + sourceIp3 + "," + sourceIp4 + "," + sourcePort + ","
+				+ destinationIp1 + "," + destinationIp2 + "," + destinationIp3 + "," + destinationIp4 + ","
+				+ destinationPort + "," + isAnomaly;
 	}
-	
+
 	public String getProtocol() {
 		return protocol;
 	}
-
-
 
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
 	}
 
-
-
-	public String getSourceIp() {
-		return sourceIp;
+	public int getSourceIp2() {
+		return sourceIp2;
 	}
 
-
-
-	public void setSourceIp(String sourceIp) {
-		this.sourceIp = sourceIp;
+	public void setSourceIp2(int sourceIp2) {
+		this.sourceIp2 = sourceIp2;
 	}
 
+	public int getSourceIp3() {
+		return sourceIp3;
+	}
 
+	public void setSourceIp3(int sourceIp3) {
+		this.sourceIp3 = sourceIp3;
+	}
+
+	public int getSourceIp4() {
+		return sourceIp4;
+	}
+
+	public void setSourceIp4(int sourceIp4) {
+		this.sourceIp4 = sourceIp4;
+	}
+
+	public int getDestinationIp2() {
+		return destinationIp2;
+	}
+
+	public void setDestinationIp2(int destinationIp2) {
+		this.destinationIp2 = destinationIp2;
+	}
+
+	public int getDestinationIp3() {
+		return destinationIp3;
+	}
+
+	public void setDestinationIp3(int destinationIp3) {
+		this.destinationIp3 = destinationIp3;
+	}
+
+	public int getDestinationIp4() {
+		return destinationIp4;
+	}
+
+	public void setDestinationIp4(int destinationIp4) {
+		this.destinationIp4 = destinationIp4;
+	}
+
+	public void setSourceIp1(int sourceIp1) {
+		this.sourceIp1 = sourceIp1;
+	}
+
+	public int getSourceIp1() {
+		return sourceIp1;
+	}
+
+	public void setSourceIp(int sourceIp1) {
+		this.sourceIp1 = sourceIp1;
+	}
 
 	public int getSourcePort() {
 		return sourcePort;
 	}
 
-
-
 	public void setSourcePort(int sourcePort) {
 		this.sourcePort = sourcePort;
 	}
 
-
-
-	public String getDestinationIp() {
-		return destinationIp;
+	public int getDestinationIp1() {
+		return destinationIp1;
 	}
 
-
-
-	public void setDestinationIp(String destinationIp) {
-		this.destinationIp = destinationIp;
+	public void setDestinationIp1(int destinationIp1) {
+		this.destinationIp1 = destinationIp1;
 	}
-
-
 
 	public int getDestinationPort() {
 		return destinationPort;
 	}
 
-
-
 	public void setDestinationPort(int destinationPort) {
 		this.destinationPort = destinationPort;
 	}
-
-
 
 	public int getIsAnomaly() {
 		return isAnomaly;
 	}
 
-
-
 	public void setIsAnomaly(int isAnomaly) {
 		this.isAnomaly = isAnomaly;
 	}
 
-
-
 	@Override
 	public Object copy() {
-		
-		return new Packet(this.protocol,this.sourceIp,this.sourcePort,this.destinationIp,this.destinationPort,this.isAnomaly);
+
+		return new Packet(this.protocol, this.sourceIp1, this.sourceIp2, this.sourceIp3, this.sourceIp4,
+				this.sourcePort, this.destinationIp1, this.destinationIp2, this.destinationIp3, this.destinationIp4,
+				this.destinationPort, this.isAnomaly);
 	}
 
 	@Override
-	public Attribute attribute(int arg0) {
-		// TODO Auto-generated method stub
+	public Attribute attribute(int i) {
+		Attribute result;
+
+		switch (i) {
+		case 0:
+			result = new Attribute("Protocol", new LinkedList<String>());
+			break;
+		case 1:
+			break;
+		}
 		return null;
 	}
 
@@ -153,12 +204,10 @@ public class Packet implements Instance {
 		return null;
 	}
 
-	
-
 	@Override
 	public void deleteAttributeAt(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -194,7 +243,7 @@ public class Packet implements Instance {
 	@Override
 	public void insertAttributeAt(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -239,79 +288,76 @@ public class Packet implements Instance {
 		return 0;
 	}
 
-	
-
 	@Override
 	public void replaceMissingValues(double[] arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setClassMissing() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setClassValue(double arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setClassValue(String arg0) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	public void setMissing(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setMissing(Attribute arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setValue(int arg0, double arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setValue(int arg0, String arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setValue(Attribute arg0, double arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setValue(Attribute arg0, String arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setValueSparse(int arg0, double arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setWeight(double arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -419,7 +465,7 @@ public class Packet implements Instance {
 	@Override
 	public void setDataset(Instances arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }
