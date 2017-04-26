@@ -33,15 +33,21 @@ public class Run {
 			List<Packet> packetsToWrite = Arrays.asList(
 					new Packet("http", 127,0,0,1, 8080, 194,0,0,4, 8080, 0),
 					new Packet("TCP", 127,0,0,1, 8080, 194,0,0,4, 8080, 0),
-					new Packet("UDP", 127,0,0,1, 8080, 194,0,0,4, 8080, 0),
+					new Packet("UDP", 127,0,0,1, 8080, 194,0,0,4, 8080, 1),
 					new Packet("http", 127,0,0,1, 8080, 194,0,0,4, 8080, 0),
 					new Packet("http", 127,0,0,1, 8080, 194,0,0,4, 8080, 0)
 					);
 			WekaPacketWriter writer = new WekaPacketWriter("TestProject",new BufferedWriter(new FileWriter("assets/writeToMe.arff")), 
 					PacketFields.PROTOCOL,
-					PacketFields.SOURCE_IP,
+					PacketFields.SOURCE_IP1,
+					PacketFields.SOURCE_IP2,
+					PacketFields.SOURCE_IP3,
+					PacketFields.SOURCE_IP4,
 					PacketFields.SOURCE_PORT,
-					PacketFields.DESTINATION_IP,
+					PacketFields.DESTINATION_IP1,
+					PacketFields.DESTINATION_IP2,
+					PacketFields.DESTINATION_IP3,
+					PacketFields.DESTINATION_IP4,
 					PacketFields.DESTINATION_PORT,
 					PacketFields.IS_ANOMALY);
 			
