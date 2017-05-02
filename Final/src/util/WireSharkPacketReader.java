@@ -22,20 +22,20 @@ public class WireSharkPacketReader extends AbstractPacketReader {
 			{
 				if(packetCounter != 0)//if not headers
 				{
-					String[] lineSeperated = line.replaceAll("\"", "").replaceAll("\\.", ",").split(",");
+					String[] seperatedLine = line.replaceAll("\"", "").replaceAll("\\.", ",").split(",");
 					
-					packets.add(new Packet((lineSeperated[0]), 
-										   Integer.parseInt(lineSeperated[1]), 
-										   Integer.parseInt(lineSeperated[2]), 
-										   Integer.parseInt(lineSeperated[3]), 
-										   Integer.parseInt(lineSeperated[4]), 
-										   Integer.parseInt(lineSeperated[5]),
-										   Integer.parseInt(lineSeperated[6]),
-										   Integer.parseInt(lineSeperated[7]),
-										   Integer.parseInt(lineSeperated[8]),
-										   Integer.parseInt(lineSeperated[9]),
-										   Integer.parseInt(lineSeperated[10]),
-										   Integer.parseInt(lineSeperated[11])));
+					packets.add(new Packet((seperatedLine[0]), 
+										   Integer.parseInt(seperatedLine[1]), 
+										   Integer.parseInt(seperatedLine[2]), 
+										   Integer.parseInt(seperatedLine[3]), 
+										   Integer.parseInt(seperatedLine[4]), 
+										   Integer.parseInt(seperatedLine[5]),
+										   Integer.parseInt(seperatedLine[6]),
+										   Integer.parseInt(seperatedLine[7]),
+										   Integer.parseInt(seperatedLine[8]),
+										   Integer.parseInt(seperatedLine[9]),
+										   Integer.parseInt(seperatedLine[10]),
+										   Integer.parseInt(seperatedLine[11])));
 					
 				}
 				packetCounter++;
