@@ -3,6 +3,7 @@ package Entities;
 
 public enum PacketFields {
 	PROTOCOL("{HTTP,TCP,UDP,ICMP}"),
+	TIME("NUMERIC"),
 	SOURCE_IP1("NUMERIC"),
 	SOURCE_IP2("NUMERIC"),
 	SOURCE_IP3("NUMERIC"),

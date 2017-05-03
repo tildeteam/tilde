@@ -25,17 +25,18 @@ public class WireSharkPacketReader extends AbstractPacketReader {
 					String[] seperatedLine = line.replaceAll("\"", "").replaceAll("\\.", ",").split(",");
 					
 					packets.add(new Packet((seperatedLine[0]), 
-										   Integer.parseInt(seperatedLine[1]), 
+										   Integer.parseInt(seperatedLine[1]),
 										   Integer.parseInt(seperatedLine[2]), 
 										   Integer.parseInt(seperatedLine[3]), 
 										   Integer.parseInt(seperatedLine[4]), 
-										   Integer.parseInt(seperatedLine[5]),
+										   Integer.parseInt(seperatedLine[5]), 
 										   Integer.parseInt(seperatedLine[6]),
 										   Integer.parseInt(seperatedLine[7]),
 										   Integer.parseInt(seperatedLine[8]),
 										   Integer.parseInt(seperatedLine[9]),
 										   Integer.parseInt(seperatedLine[10]),
-										   Integer.parseInt(seperatedLine[11])));
+										   Integer.parseInt(seperatedLine[11]),
+										   Integer.parseInt(seperatedLine[12])));
 					
 				}
 				packetCounter++;

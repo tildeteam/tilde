@@ -9,6 +9,7 @@ import weka.core.Instances;
 
 public class Packet implements Instance {
 	private String protocol;
+	private int time;
 	private int sourceIp1;
 	private int sourceIp2;
 	private int sourceIp3;
@@ -21,9 +22,10 @@ public class Packet implements Instance {
 	private int destinationPort;
 	private int isAnomaly; // 1 for anomaly 0 for normal
 
-	public Packet(String protocol, int s_ip1, int s_ip2, int s_ip3, int s_ip4, int s_port, int d_ip1, int d_ip2,
+	public Packet(String protocol,int time, int s_ip1, int s_ip2, int s_ip3, int s_ip4, int s_port, int d_ip1, int d_ip2,
 			int d_ip3, int d_ip4, int d_port, int isAnonaly) {
 		this.protocol = protocol;
+		this.time = time;
 		this.sourceIp1 = s_ip1;
 		this.sourceIp2 = s_ip2;
 		this.sourceIp3 = s_ip3;
@@ -50,6 +52,14 @@ public class Packet implements Instance {
 		return protocol;
 	}
 
+	public int getTime() {
+		return time;
+	}
+	
+	public void setTime(int time) {
+		this.time = time;
+	}
+	
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
 	}
@@ -149,7 +159,7 @@ public class Packet implements Instance {
 	@Override
 	public Object copy() {
 
-		return new Packet(this.protocol, this.sourceIp1, this.sourceIp2, this.sourceIp3, this.sourceIp4,
+		return new Packet(this.protocol,this.time, this.sourceIp1, this.sourceIp2, this.sourceIp3, this.sourceIp4,
 				this.sourcePort, this.destinationIp1, this.destinationIp2, this.destinationIp3, this.destinationIp4,
 				this.destinationPort, this.isAnomaly);
 	}

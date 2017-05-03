@@ -14,7 +14,7 @@ import util.WekaPacketWriter;
 import util.WindowedWekaPacketWriter;
 import util.WireSharkPacketReader;
 
-public class Run {
+public class ReadAndWriteTest {
 
 	public static void main(String[] args) {
 
@@ -30,6 +30,7 @@ public class Run {
 			WindowedWekaPacketWriter writer = new WindowedWekaPacketWriter("test",
 					new BufferedWriter(new FileWriter("assets/writeToMe.arff")), 3,
 					PacketFields.PROTOCOL,
+					PacketFields.TIME,
 					PacketFields.SOURCE_IP1, 
 					PacketFields.SOURCE_IP2, 
 					PacketFields.SOURCE_IP3, 
