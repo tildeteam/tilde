@@ -11,7 +11,7 @@ import Entities.PacketFields;
 
 public class WindowedWekaPacketWriter extends WekaPacketWriter {
 
-	private List<Packet> window = new LinkedList<Packet>();
+	private List<Packet> window;
 	private int windowSize;
 	private int windowOffset;
 
@@ -21,6 +21,7 @@ public class WindowedWekaPacketWriter extends WekaPacketWriter {
 
 		this.windowSize = windowSize;
 		windowOffset = 0;
+		window = new LinkedList<Packet>();
 	}
 
 	public int getWindowSize() {
@@ -36,6 +37,7 @@ public class WindowedWekaPacketWriter extends WekaPacketWriter {
 		Packet[] array =  windowToArray();
 		
 		try {
+
 			this.writeInstances(array);
 		} catch (IOException e) {
 
@@ -47,11 +49,11 @@ public class WindowedWekaPacketWriter extends WekaPacketWriter {
 	
 
 	private Packet[] windowToArray() {
-		Packet[] p = new Packet[getData().size()];
+		Packet[] p = new Packet[getWindowSize()];
 
-		for(int i = 0 ; i < getData().size(); i++)
+		for(int i = 0 ; i < getWindowSize(); i++)
 		{
-			p[i] = getData().get(i);
+			p[i] = getWindow().get(i);
 		}
 		
 		return p;
@@ -85,7 +87,10 @@ public class WindowedWekaPacketWriter extends WekaPacketWriter {
 		write("\n");
 		write("@DATA\n");
 		
-		while(getWindowSize() + getWindowOffset() < this.getData().size()){
+		int windowSize = getWindowSize();
+		int windowOffset = getWindowOffset();
+		
+		while(windowSize + windowOffset < this.getData().size()){
 			
 			writeWindow();
 			iterateWindow();

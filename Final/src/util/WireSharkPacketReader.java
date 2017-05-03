@@ -38,8 +38,9 @@ public class WireSharkPacketReader extends AbstractPacketReader {
 					int d_port = Integer.parseInt(seperatedLine[12]);
 					int isAnomaly = Integer.parseInt(seperatedLine[13]);
 					
-					
-					packets.add(new Packet(protocol, timeSeconds, s_ip1, s_ip2, s_ip3, s_ip4, s_port, d_ip1, d_ip2, d_ip3, d_ip4, d_port, isAnomaly));
+					Packet p = new Packet(protocol, timeSeconds, s_ip1, s_ip2, s_ip3, s_ip4, s_port, d_ip1, d_ip2, d_ip3, d_ip4, d_port, isAnomaly);
+					System.out.println(p.toString());
+					packets.add(p);
 					
 				}
 				packetCounter++;
