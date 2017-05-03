@@ -1,4 +1,4 @@
-package main;
+package Tests;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -26,7 +26,7 @@ public class WriteTest {
 						new BufferedWriter(
 							new FileWriter("assets/writeToMe.arff")), 
 						PacketFields.PROTOCOL,
-						PacketFields.TIME,
+						PacketFields.TIME_SECONDS,
 						PacketFields.SOURCE_IP1, 
 						PacketFields.SOURCE_IP2, 
 						PacketFields.SOURCE_IP3, 

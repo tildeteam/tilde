@@ -23,20 +23,23 @@ public class WireSharkPacketReader extends AbstractPacketReader {
 				if(packetCounter != 0)//if not headers
 				{
 					String[] seperatedLine = line.replaceAll("\"", "").replaceAll("\\.", ",").split(",");
+					String protocol = seperatedLine[0];
+					int timeSeconds = Integer.parseUnsignedInt(seperatedLine[1]);
+					//int timeMilli = Integer.parseInt(seperatedLine[2]);
+					int s_ip1= Integer.parseInt(seperatedLine[3]);
+					int s_ip2 = Integer.parseInt(seperatedLine[4]);
+					int s_ip3 = Integer.parseInt(seperatedLine[5]);
+					int s_ip4 = Integer.parseInt(seperatedLine[6]);
+					int s_port = Integer.parseInt(seperatedLine[7]);
+					int d_ip1 = Integer.parseInt(seperatedLine[8]);
+					int d_ip2 = Integer.parseInt(seperatedLine[9]);
+					int d_ip3 = Integer.parseInt(seperatedLine[10]);
+					int d_ip4 = Integer.parseInt(seperatedLine[11]);
+					int d_port = Integer.parseInt(seperatedLine[12]);
+					int isAnomaly = Integer.parseInt(seperatedLine[13]);
 					
-					packets.add(new Packet((seperatedLine[0]), 
-										   Integer.parseInt(seperatedLine[1]),
-										   Integer.parseInt(seperatedLine[2]), 
-										   Integer.parseInt(seperatedLine[3]), 
-										   Integer.parseInt(seperatedLine[4]), 
-										   Integer.parseInt(seperatedLine[5]), 
-										   Integer.parseInt(seperatedLine[6]),
-										   Integer.parseInt(seperatedLine[7]),
-										   Integer.parseInt(seperatedLine[8]),
-										   Integer.parseInt(seperatedLine[9]),
-										   Integer.parseInt(seperatedLine[10]),
-										   Integer.parseInt(seperatedLine[11]),
-										   Integer.parseInt(seperatedLine[12])));
+					
+					packets.add(new Packet(protocol, timeSeconds, s_ip1, s_ip2, s_ip3, s_ip4, s_port, d_ip1, d_ip2, d_ip3, d_ip4, d_port, isAnomaly));
 					
 				}
 				packetCounter++;

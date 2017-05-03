@@ -1,7 +1,6 @@
-package main;
+package Tests;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,10 +18,13 @@ public class ReadTest {
 		try {
 			WireSharkPacketReader reader = new WireSharkPacketReader(
 					new BufferedReader(
-					new FileReader("assets/readFromMe.txt")));
+					new FileReader("assets/readFromMe")));
 			
-			reader.readPackets(packetsRead);
+			int numOfPacketsRead = reader.readPackets(packetsRead);
+			System.out.println(numOfPacketsRead+" packets read");
 			reader.close();
+			
+			System.out.println(packetsRead);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

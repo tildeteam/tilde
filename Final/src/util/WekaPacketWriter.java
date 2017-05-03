@@ -95,8 +95,10 @@ public class WekaPacketWriter extends AbstractPacketWriter {
 		for (int i = 0; i < p.length; i++) {
 
 			if (i != p.length - 1) {
+				System.out.println(p[i].toString() + ",");
 				write(p[i].toString() + ",");
 			} else {
+				System.out.println(p[i].toString());
 				write(p[i].toString());
 			}
 		}

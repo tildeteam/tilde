@@ -23,7 +23,7 @@ public class Packet implements Instance {
 	private int isAnomaly; // 1 for anomaly 0 for normal
 
 	public Packet(String protocol,int time, int s_ip1, int s_ip2, int s_ip3, int s_ip4, int s_port, int d_ip1, int d_ip2,
-			int d_ip3, int d_ip4, int d_port, int isAnonaly) {
+			int d_ip3, int d_ip4, int d_port, int isAnomaly) {
 		this.protocol = protocol;
 		this.time = time;
 		this.sourceIp1 = s_ip1;
@@ -36,14 +36,14 @@ public class Packet implements Instance {
 		this.destinationIp3 = d_ip3;
 		this.destinationIp4 = d_ip4;
 		this.destinationPort = d_port;
-		this.isAnomaly = isAnonaly;
+		this.isAnomaly = isAnomaly;
 
 	}
 
 	@Override
 	public String toString() {
 
-		return protocol + "," + sourceIp1 + "," + sourceIp2 + "," + sourceIp3 + "," + sourceIp4 + "," + sourcePort + ","
+		return protocol + ","+ time +"," + sourceIp1 + "," + sourceIp2 + "," + sourceIp3 + "," + sourceIp4 + "," + sourcePort + ","
 				+ destinationIp1 + "," + destinationIp2 + "," + destinationIp3 + "," + destinationIp4 + ","
 				+ destinationPort + "," + isAnomaly;
 	}

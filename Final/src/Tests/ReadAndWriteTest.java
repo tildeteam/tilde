@@ -1,4 +1,4 @@
-package main;
+package Tests;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -23,14 +23,14 @@ public class ReadAndWriteTest {
 			List<Packet> packetsRead = new ArrayList<Packet>();
 
 			WireSharkPacketReader reader = new WireSharkPacketReader(
-					new BufferedReader(new FileReader("assets/readFromMe.txt")));
+					new BufferedReader(new FileReader("assets/readFromMe")));
 			numOfPacketsRead = reader.readPackets(packetsRead);
 			System.out.println(numOfPacketsRead);
 
 			WindowedWekaPacketWriter writer = new WindowedWekaPacketWriter("test",
-					new BufferedWriter(new FileWriter("assets/writeToMe.arff")), 3,
+					new BufferedWriter(new FileWriter("assets/dataForWeka.arff")), 3,
 					PacketFields.PROTOCOL,
-					PacketFields.TIME,
+					PacketFields.TIME_SECONDS,
 					PacketFields.SOURCE_IP1, 
 					PacketFields.SOURCE_IP2, 
 					PacketFields.SOURCE_IP3, 
@@ -46,6 +46,7 @@ public class ReadAndWriteTest {
 			
 //			WekaPacketWriter writer = new WekaPacketWriter("TestProject",new BufferedWriter(new FileWriter("assets/writeToMe.arff")), 
 //					PacketFields.PROTOCOL,
+//					PacketFields.TIME_SECONDS,
 //					PacketFields.SOURCE_IP1, 
 //					PacketFields.SOURCE_IP2, 
 //					PacketFields.SOURCE_IP3, 
