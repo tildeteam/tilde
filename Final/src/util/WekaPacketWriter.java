@@ -14,6 +14,7 @@ public class WekaPacketWriter extends AbstractPacketWriter {
 	private String projectName;
 	private boolean isAttributesInitiallized = false;
 	private ArrayList<PacketFields> packetFieldsList = new ArrayList<PacketFields>();
+	private List<Packet> data;
 
 	public WekaPacketWriter(String projectName, Writer writer, PacketFields... fields) {
 		super(writer);
@@ -23,41 +24,49 @@ public class WekaPacketWriter extends AbstractPacketWriter {
 		}
 	}
 
+	public ArrayList<PacketFields> getPacketFieldsList() {
+		return packetFieldsList;
+	}
+
 	@Override
 	public void writePackets(List<Packet> packets) {
+		setData(packets);
+		
 		try {
-			write("@RELATION " + projectName + "\n\n");
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+			writeProject();
+			writeAttributes();
+			isAttributesInitiallized = true;
+			writeData();
 
-		for (PacketFields f : packetFieldsList) {
-			writeAttribute(f.name(), f.getType());
-		}
-		try {
-			write("\n");
-			write("@DATA\n");
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		isAttributesInitiallized = true;
+		} catch (IOException e) {
 
-		for (Packet packet : packets) {
-			try {
-				writeInstance(packet);
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
-
+			e.printStackTrace();
 		}
 
 	}
 
-	private void writeAttribute(String name , String type) {
+	protected void setData(List<Packet> packets) {
+		this.data = packets;
+		
+	}
+
+	protected void writeData() throws IOException {
+		write("\n");
+		write("@DATA\n");
+		for (Packet packet : data) {
+			writeInstances(packet);
+		}
+	}
+
+	protected void writeProject() throws IOException {
+		write("@RELATION " + projectName + "\n\n");
+
+	}
+
+	protected void writeAttribute(String name, String type) {
 		try {
 
-			write("@ATTRIBUTE " + name +" "+type+"\n");
+			write("@ATTRIBUTE " + name + " " + type + "\n");
 		} catch (IOException e) {
 
 			e.printStackTrace();
@@ -69,6 +78,53 @@ public class WekaPacketWriter extends AbstractPacketWriter {
 			throw new IOException("cannont write data until file headers are written");
 		}
 		write(p.toString() + "\n");
+	}
+
+	/**
+	 * this function writes all packets received in p as one Instance in the
+	 * output file
+	 * 
+	 * @param p
+	 * @throws IOException
+	 */
+	public void writeInstances(Packet... p) throws IOException {
+		if (isAttributesInitiallized == false) {
+			throw new IOException("cannont write data until file headers are written");
+		}
+
+		for (int i = 0; i < p.length; i++) {
+
+			if (i != p.length - 1) {
+				write(p[i].toString() + ",");
+			} else {
+				write(p[i].toString());
+			}
+		}
+		write("\n");
+
+	}
+
+	protected void writeAttributes() {
+		for (PacketFields f : packetFieldsList) {
+			writeAttribute(f.name(), f.getType());
+		}
+
+	}
+
+	public void setAttributesInitiallized(boolean isAttributesInitiallized) {
+		this.isAttributesInitiallized = isAttributesInitiallized;
+	}
+
+	public boolean isAttributesInitiallized() {
+		return isAttributesInitiallized;
+	}
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public List<Packet> getData() {
+		return data;
 	}
 
 }
