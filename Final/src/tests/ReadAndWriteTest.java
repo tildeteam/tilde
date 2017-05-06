@@ -28,7 +28,7 @@ public class ReadAndWriteTest {
 			System.out.println(numOfPacketsRead);
 
 			WindowedWekaPacketWriter writer = new WindowedWekaPacketWriter("test",
-					new BufferedWriter(new FileWriter("assets/dataForWeka.arff")), 3,
+					new BufferedWriter(new FileWriter("assets/dataForWeka.arff")), 5,
 					PacketFields.PROTOCOL,
 					PacketFields.TIME_SECONDS,
 					PacketFields.SOURCE_IP1, 

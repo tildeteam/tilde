@@ -87,16 +87,31 @@ public class WindowedWekaPacketWriter extends WekaPacketWriter {
 		write("\n");
 		write("@DATA\n");
 		
-		int windowSize = getWindowSize();
-		int windowOffset = getWindowOffset();
 		
-		while(windowSize + windowOffset < this.getData().size()){
+		initWindow();
+		
+		while(windowSize + windowOffset <= this.getData().size()){
 			
 			writeWindow();
-			iterateWindow();
+			
+			if(windowOffset +windowSize != this.getData().size()){
+				iterateWindow();	
+			}
+			else
+			{
+				windowOffset = this.getData().size();
+			}
+			
 			
 		}
 		
+		
+	}
+
+	private void initWindow() {
+		for (int i = 0; i < getWindowSize(); i++) {
+			getWindow().add(getData().get(i));
+		}
 		
 	}
 	
