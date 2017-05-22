@@ -15,29 +15,19 @@ public class WriteTest {
 	public static void main(String[] args) {
 		
 		List<Packet> packets = new LinkedList<Packet>();
-		packets.add(new Packet("Http", 1400000, 198, 220, 1, 10, 5400, 192, 0, 0, 1, 80, 1));
-		packets.add(new Packet("TCP", 1400001, 192, 0, 0, 1, 8080, 242, 1, 1, 20, 80, 0));
-		packets.add(new Packet("UDP", 1400000, 198, 220, 1, 10, 5400, 192, 0, 0, 1, 80, 1));
-		packets.add(new Packet("Http", 1400001, 192, 0, 0, 1, 8080, 242, 1, 1, 20, 80, 0));
+		int[] hist = new int[256];
+		hist[1]++;
+		hist[2]++;
+		packets.add(new Packet("Http".hashCode(), 1400000, 198, 220, 1, 10, 5400, 192, 0, 0, 1, 80,1000,hist, 1));
+		packets.add(new Packet("TCP".hashCode(), 1400001, 192, 0, 0, 1, 8080, 242, 1, 1, 20, 80,1500,hist, 0));
+		packets.add(new Packet("UDP".hashCode(), 1400000, 198, 220, 1, 10, 5400, 192, 0, 0, 1, 80,1300,hist, 1));
+		packets.add(new Packet("Http".hashCode(), 1400001, 192, 0, 0, 1, 8080, 242, 1, 1, 20, 80,1600,hist, 0));
 		
 		try {
 			WekaPacketWriter writer = 
 					new WekaPacketWriter("Writer Test", 
 						new BufferedWriter(
-							new FileWriter("assets/writeToMe.arff")), 
-						PacketFields.PROTOCOL,
-						PacketFields.TIME_SECONDS,
-						PacketFields.SOURCE_IP1, 
-						PacketFields.SOURCE_IP2, 
-						PacketFields.SOURCE_IP3, 
-						PacketFields.SOURCE_IP4,
-						PacketFields.SOURCE_PORT, 
-						PacketFields.DESTINATION_IP1, 
-						PacketFields.DESTINATION_IP2,
-						PacketFields.DESTINATION_IP3, 
-						PacketFields.DESTINATION_IP4, 
-						PacketFields.DESTINATION_PORT,
-						PacketFields.IS_ANOMALY);
+							new FileWriter("assets/writeToMe.arff")));
 			
 			writer.writePackets(packets);
 			writer.close();

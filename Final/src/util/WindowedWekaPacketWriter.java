@@ -15,9 +15,8 @@ public class WindowedWekaPacketWriter extends WekaPacketWriter {
 	private int windowSize;
 	private int windowOffset;
 
-	public WindowedWekaPacketWriter(String projectName, Writer writer, int windowSize,
-			PacketFields... fields) throws IOException {
-		super(projectName, writer, fields);
+	public WindowedWekaPacketWriter(String projectName, Writer writer, int windowSize) throws IOException {
+		super(projectName, writer);
 
 		this.windowSize = windowSize;
 		windowOffset = 0;
@@ -115,11 +114,7 @@ public class WindowedWekaPacketWriter extends WekaPacketWriter {
 		
 	}
 	
-	
-	
-	
-	
-	
+
 	
 	
 }

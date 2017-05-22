@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Entities.Packet;
-import Entities.PacketFields;
-import util.WekaPacketWriter;
 import util.WindowedWekaPacketWriter;
 import util.WireSharkPacketReader;
 
@@ -28,36 +26,8 @@ public class ReadAndWriteTest {
 			System.out.println(numOfPacketsRead);
 
 			WindowedWekaPacketWriter writer = new WindowedWekaPacketWriter("test",
-					new BufferedWriter(new FileWriter("assets/dataForWeka.arff")), 5,
-					PacketFields.PROTOCOL,
-					PacketFields.TIME_SECONDS,
-					PacketFields.SOURCE_IP1, 
-					PacketFields.SOURCE_IP2, 
-					PacketFields.SOURCE_IP3, 
-					PacketFields.SOURCE_IP4,
-					PacketFields.SOURCE_PORT, 
-					PacketFields.DESTINATION_IP1, 
-					PacketFields.DESTINATION_IP2,
-					PacketFields.DESTINATION_IP3, 
-					PacketFields.DESTINATION_IP4, 
-					PacketFields.DESTINATION_PORT,
-					PacketFields.IS_ANOMALY);
+					new BufferedWriter(new FileWriter("assets/dataForWeka.arff")), 3);
 			
-			
-//			WekaPacketWriter writer = new WekaPacketWriter("TestProject",new BufferedWriter(new FileWriter("assets/writeToMe.arff")), 
-//					PacketFields.PROTOCOL,
-//					PacketFields.TIME_SECONDS,
-//					PacketFields.SOURCE_IP1, 
-//					PacketFields.SOURCE_IP2, 
-//					PacketFields.SOURCE_IP3, 
-//					PacketFields.SOURCE_IP4,
-//					PacketFields.SOURCE_PORT, 
-//					PacketFields.DESTINATION_IP1, 
-//					PacketFields.DESTINATION_IP2,
-//					PacketFields.DESTINATION_IP3, 
-//					PacketFields.DESTINATION_IP4, 
-//					PacketFields.DESTINATION_PORT,
-//					PacketFields.IS_ANOMALY);
 
 			writer.writePackets(packetsRead);
 			writer.flush();

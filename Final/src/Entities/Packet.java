@@ -8,7 +8,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 public class Packet implements Instance {
-	private String protocol;
+	private int protocol;
 	private int time;
 	private int sourceIp1;
 	private int sourceIp2;
@@ -20,10 +20,12 @@ public class Packet implements Instance {
 	private int destinationIp3;
 	private int destinationIp4;
 	private int destinationPort;
+	private int length;
+	private int[] payloadHist;
 	private int isAnomaly; // 1 for anomaly 0 for normal
 
-	public Packet(String protocol,int time, int s_ip1, int s_ip2, int s_ip3, int s_ip4, int s_port, int d_ip1, int d_ip2,
-			int d_ip3, int d_ip4, int d_port, int isAnomaly) {
+	public Packet(int protocol,int time, int s_ip1, int s_ip2, int s_ip3, int s_ip4, int s_port, int d_ip1, int d_ip2,
+			int d_ip3, int d_ip4, int d_port,int length,int[] hist, int isAnomaly) {
 		this.protocol = protocol;
 		this.time = time;
 		this.sourceIp1 = s_ip1;
@@ -36,8 +38,10 @@ public class Packet implements Instance {
 		this.destinationIp3 = d_ip3;
 		this.destinationIp4 = d_ip4;
 		this.destinationPort = d_port;
+		this.length = length; 
+		this.payloadHist = hist;
 		this.isAnomaly = isAnomaly;
-
+		
 	}
 
 	@Override
@@ -45,10 +49,24 @@ public class Packet implements Instance {
 
 		return protocol + ","+ time +"," + sourceIp1 + "," + sourceIp2 + "," + sourceIp3 + "," + sourceIp4 + "," + sourcePort + ","
 				+ destinationIp1 + "," + destinationIp2 + "," + destinationIp3 + "," + destinationIp4 + ","
-				+ destinationPort + "," + isAnomaly;
+				+ destinationPort + ","+ length +","+ histToString() +","+ isAnomaly;
 	}
 
-	public String getProtocol() {
+	private String histToString() {
+		
+		String result = "";
+		int i = 0;
+		for(; i < payloadHist.length-1; i++)
+		{
+				
+			result = result+payloadHist[i]+",";
+		}
+		result = result+payloadHist[i];
+	
+		return result;
+	}
+
+	public int getProtocol() {
 		return protocol;
 	}
 
@@ -60,7 +78,7 @@ public class Packet implements Instance {
 		this.time = time;
 	}
 	
-	public void setProtocol(String protocol) {
+	public void setProtocol(int protocol) {
 		this.protocol = protocol;
 	}
 
@@ -161,7 +179,7 @@ public class Packet implements Instance {
 
 		return new Packet(this.protocol,this.time, this.sourceIp1, this.sourceIp2, this.sourceIp3, this.sourceIp4,
 				this.sourcePort, this.destinationIp1, this.destinationIp2, this.destinationIp3, this.destinationIp4,
-				this.destinationPort, this.isAnomaly);
+				this.destinationPort,this.length,this.payloadHist, this.isAnomaly);
 	}
 
 	@Override

@@ -16,11 +16,11 @@ public class WekaPacketWriter extends AbstractPacketWriter {
 	private ArrayList<PacketFields> packetFieldsList = new ArrayList<PacketFields>();
 	private List<Packet> data;
 
-	public WekaPacketWriter(String projectName, Writer writer, PacketFields... fields) {
+	public WekaPacketWriter(String projectName, Writer writer) {
 		super(writer);
 		this.projectName = projectName;
-		for (PacketFields packetFields : fields) {
-			packetFieldsList.add(packetFields);
+		for (PacketFields field : PacketFields.values()) {
+			packetFieldsList.add(field);
 		}
 	}
 
