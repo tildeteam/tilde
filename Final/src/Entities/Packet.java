@@ -44,6 +44,16 @@ public class Packet implements Instance {
 		
 	}
 
+	/**
+	 * 
+	 * @return String of packet attributes without Label Anomaly
+	 */
+	public String toStringNoLabel() {
+		return protocol + ","+ time +"," + sourceIp1 + "," + sourceIp2 + "," + sourceIp3 + "," + sourceIp4 + "," + sourcePort + ","
+				+ destinationIp1 + "," + destinationIp2 + "," + destinationIp3 + "," + destinationIp4 + ","
+				+ destinationPort + ","+ length +","+ histToString();
+	}
+	
 	@Override
 	public String toString() {
 
@@ -495,5 +505,7 @@ public class Packet implements Instance {
 		// TODO Auto-generated method stub
 
 	}
+
+	
 
 }

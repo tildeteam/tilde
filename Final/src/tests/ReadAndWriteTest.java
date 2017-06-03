@@ -17,16 +17,16 @@ public class ReadAndWriteTest {
 	public static void main(String[] args) {
 
 		try {
-			int numOfPacketsRead;
+			int numOfPacketsRead=0;
 			List<Packet> packetsRead = new ArrayList<Packet>();
 
 			WireSharkPacketReader reader = new WireSharkPacketReader(
 					new BufferedReader(new FileReader("assets/readFromMe")));
 			numOfPacketsRead = reader.readPackets(packetsRead);
-			System.out.println(numOfPacketsRead);
+			System.out.println("# of packets read: "+numOfPacketsRead);
 
 			WindowedWekaPacketWriter writer = new WindowedWekaPacketWriter("test",
-					new BufferedWriter(new FileWriter("assets/dataForWeka.arff")), 3);
+					new BufferedWriter(new FileWriter("assets/windowSize5.arff")), 5);
 			
 
 			writer.writePackets(packetsRead);

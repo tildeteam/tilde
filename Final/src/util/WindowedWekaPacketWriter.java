@@ -33,8 +33,8 @@ public class WindowedWekaPacketWriter extends WekaPacketWriter {
 
 	protected void writeWindow() {
 
-		Packet[] array =  windowToArray();
-		
+		Packet[] array = windowToArray();
+
 		try {
 
 			this.writeInstances(array);
@@ -44,77 +44,86 @@ public class WindowedWekaPacketWriter extends WekaPacketWriter {
 		}
 
 	}
-	
-	
 
 	private Packet[] windowToArray() {
 		Packet[] p = new Packet[getWindowSize()];
 
-		for(int i = 0 ; i < getWindowSize(); i++)
-		{
+		for (int i = 0; i < getWindowSize(); i++) {
 			p[i] = getWindow().get(i);
 		}
-		
+
 		return p;
 	}
 
+	/**
+	 * overriding the super class method to write a Window's attributes. Marking
+	 * attributeA<i> for the i's packet in the window
+	 * 
+	 * @author guy
+	 * 
+	 */
 	@Override
 	protected void writeAttributes() {
 		ArrayList<PacketFields> array = getPacketFieldsList();
-		for (int i = 0 ; i < getWindowSize() ; i++) {
+		for (int i = 0; i < getWindowSize(); i++) {
 			for (PacketFields field : array) {
-				writeAttribute(field.name()+"<"+(i+1)+">", field.getType());
+
+				if (getWindowSize() == 1) // single packet window we should
+											// include isAnomaly field
+				{
+					writeAttribute(field.name() + "<" + (i + 1) + ">", field.getType());
+				} else { // we shouldnt write individual isAnomaly fields (only
+							// the final window label)
+					if (!field.name().equals("IS_ANOMALY")) {
+						writeAttribute(field.name() + "<" + (i + 1) + ">", field.getType());
+					}
+				}
 			}
 		}
 	}
 
 	protected void iterateWindow() {
-		
-		getWindow().add(this.getData().get(windowOffset + windowSize)); //get the next Data instance 
-		getWindow().remove(0); //remove the oldest data instance from the window (window movement)
+
+		getWindow().add(this.getData().get(windowOffset + windowSize)); // get
+																		// the
+																		// next
+																		// Data
+																		// instance
+		getWindow().remove(0); // remove the oldest data instance from the
+								// window (window movement)
 		windowOffset++;
 	}
 
-	
 	public int getWindowOffset() {
 		return windowOffset;
 	}
-	
-	
+
 	@Override
 	protected void writeData() throws IOException {
 		write("\n");
 		write("@DATA\n");
-		
-		
-		initWindow();
-		
-		while(windowSize + windowOffset <= this.getData().size()){
-			
+
+		initWindow(); // initiallizing the first n packets in the window
+
+		while (windowSize + windowOffset <= this.getData().size()) {
+			System.out.println("writing window: " + (windowOffset + 1));
 			writeWindow();
-			
-			if(windowOffset +windowSize != this.getData().size()){
-				iterateWindow();	
-			}
-			else
-			{
+
+			if (windowOffset + windowSize != this.getData().size()) {
+				iterateWindow();
+			} else {
 				windowOffset = this.getData().size();
 			}
-			
-			
+
 		}
-		
-		
+
 	}
 
 	private void initWindow() {
 		for (int i = 0; i < getWindowSize(); i++) {
 			getWindow().add(getData().get(i));
 		}
-		
-	}
-	
 
-	
-	
+	}
+
 }

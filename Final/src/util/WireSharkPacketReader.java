@@ -29,10 +29,10 @@ public class WireSharkPacketReader extends AbstractPacketReader {
 					String[] seperatedLine = line.substring(1, line.length() - 1).split("\"\\,\"");
 					// TCP,1493804267.060354329,10.10.249.7,62339,10.10.248.20,80,60,62339
 					// > 80 [ACK] Seq=1 Ack=1 Win=256 Len=1
-					for (String string : seperatedLine) {
-						System.out.print(string + ",");
-					}
-					System.out.println("");
+//					for (String string : seperatedLine) {
+//						System.out.print(string + ",");
+//					}
+//					System.out.println("");
 					int protocol = seperatedLine[0].hashCode();
 
 					String[] time = seperatedLine[1].split("\\.");
@@ -119,12 +119,13 @@ public class WireSharkPacketReader extends AbstractPacketReader {
 					int isAnomaly = new Random().nextInt(2);
 					Packet p = new Packet(protocol, timeSeconds, s_ip1, s_ip2, s_ip3, s_ip4, s_port, d_ip1, d_ip2,
 							d_ip3, d_ip4, d_port, length, hist, isAnomaly);
-					System.out.println(p.toString());
+				//	System.out.println(p.toString());
+					
 					packets.add(p);
 
 				}
 				packetCounter++;
-
+				System.out.println(packetCounter-1);
 			}
 		} catch (
 

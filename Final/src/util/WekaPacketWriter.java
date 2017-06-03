@@ -31,7 +31,7 @@ public class WekaPacketWriter extends AbstractPacketWriter {
 	@Override
 	public void writePackets(List<Packet> packets) {
 		setData(packets);
-		
+
 		try {
 			writeProject();
 			writeAttributes();
@@ -47,7 +47,7 @@ public class WekaPacketWriter extends AbstractPacketWriter {
 
 	protected void setData(List<Packet> packets) {
 		this.data = packets;
-		
+
 	}
 
 	protected void writeData() throws IOException {
@@ -91,18 +91,45 @@ public class WekaPacketWriter extends AbstractPacketWriter {
 		if (isAttributesInitiallized == false) {
 			throw new IOException("cannont write data until file headers are written");
 		}
+		boolean isWindowAnomaly = false;
 
-		for (int i = 0; i < p.length; i++) {
-
-			if (i != p.length - 1) {
-				System.out.print(p[i].toString() + ",");
-				write(p[i].toString() + ",");
-			} else {
-				System.out.println(p[i].toString());
-				write(p[i].toString());
+		for (Packet packet : p) {			//need to know before writing packets if the window is anomalous
+			if(packet.getIsAnomaly()==1)
+			{
+				isWindowAnomaly=true;
 			}
 		}
-		write("\n");
+		
+		if (p.length == 1) // if not a window
+		{
+
+			//System.out.println(p[0].toString());
+			write(p[0].toString());
+
+			write("\n");
+		} else // if we are writing a window
+		{
+			for (int i = 0; i < p.length; i++) {
+
+				if (i != p.length - 1) {	//if not the last packet in the array
+					//System.out.print(p[i].toStringNoLabel() + ",");
+					write(p[i].toStringNoLabel() + ",");
+				} else {
+					//System.out.println(p[i].toStringNoLabel());
+					write(p[i].toStringNoLabel());
+				}
+			}
+			
+			if(isWindowAnomaly==true){
+				write(",1");
+			}
+			else
+			{
+				write(",0");
+			}
+			
+			write("\n");
+		}
 
 	}
 
