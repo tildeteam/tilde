@@ -30,10 +30,11 @@ public class TimeStampChanger {
 			String modifiedLine = "";
 			int j = 1 ;
 			while ((line = reader.readLine()) != null) {
+				modifiedLine = "";
 				String[] seperatedLine = line.split(",");
-				System.out.print(seperatedLine[1]+" ------>");
+				System.out.print(seperatedLine[1]+" ------> ");
 				DecimalFormat df = new DecimalFormat("#");
-				df.setMaximumFractionDigits(7);
+				df.setMaximumFractionDigits(10);
 				String finalNumber = df.format((Double.parseDouble(timeToWrite) + (j)*Double.parseDouble(timeDelta)));
 				seperatedLine[1] = finalNumber;
 				System.out.println(seperatedLine[1]);
@@ -41,9 +42,14 @@ public class TimeStampChanger {
 					if (i != seperatedLine.length - 1) {
 						modifiedLine = modifiedLine + seperatedLine[i] + ",";
 					}
+					else
+					{
+						modifiedLine = modifiedLine + seperatedLine[i];
+					}
 				}
 
 				writer.write(modifiedLine+"\n");
+				writer.flush();
 				j++;
 			}
 
