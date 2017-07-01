@@ -21,12 +21,12 @@ public class ReadAndWriteTest {
 			List<Packet> packetsRead = new ArrayList<Packet>();
 
 			WireSharkPacketReader reader = new WireSharkPacketReader(
-					new BufferedReader(new FileReader("assets/readFromMe")));
+					new BufferedReader(new FileReader("assets/dataLabeled")));
 			numOfPacketsRead = reader.readPackets(packetsRead);
 			System.out.println("# of packets read: "+numOfPacketsRead);
 
 			WindowedWekaPacketWriter writer = new WindowedWekaPacketWriter("test",
-					new BufferedWriter(new FileWriter("assets/windowSize5.arff")), 5);
+					new BufferedWriter(new FileWriter("assets/windowSize1.arff")), 1);
 			
 
 			writer.writePackets(packetsRead);

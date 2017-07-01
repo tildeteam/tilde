@@ -36,7 +36,7 @@ public class TimeStampChanger {
 				DecimalFormat df = new DecimalFormat("#");
 				df.setMaximumFractionDigits(10);
 				String finalNumber = df.format((Double.parseDouble(timeToWrite) + (j)*Double.parseDouble(timeDelta)));
-				seperatedLine[1] = finalNumber;
+				seperatedLine[1] = "\""+finalNumber+"\"";
 				System.out.println(seperatedLine[1]);
 				for (int i = 0; i < seperatedLine.length; i++) {
 					if (i != seperatedLine.length - 1) {
