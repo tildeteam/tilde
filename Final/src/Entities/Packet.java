@@ -1,7 +1,6 @@
 package Entities;
 
 import java.util.Enumeration;
-import java.util.LinkedList;
 
 import weka.core.Attribute;
 import weka.core.Instance;
@@ -194,11 +193,11 @@ public class Packet implements Instance {
 
 	@Override
 	public Attribute attribute(int i) {
-		Attribute result;
+		//Attribute result;
 
 		switch (i) {
 		case 0:
-			result = new Attribute("Protocol", new LinkedList<String>());
+			//result = new Attribute("Protocol", new LinkedList<String>());
 			break;
 		case 1:
 			break;

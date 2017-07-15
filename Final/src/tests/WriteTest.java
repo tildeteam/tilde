@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import Entities.Packet;
-import Entities.PacketFields;
 import util.WekaPacketWriter;
 
 public class WriteTest {
