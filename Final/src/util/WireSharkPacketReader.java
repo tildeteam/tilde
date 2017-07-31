@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
-import Entities.Packet;
 import infra.AbstractPacketReader;
+import models.Packet;
 
 public class WireSharkPacketReader extends AbstractPacketReader {
 

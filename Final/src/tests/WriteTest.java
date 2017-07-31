@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import Entities.Packet;
+import models.Packet;
 import util.WekaPacketWriter;
 
 public class WriteTest {

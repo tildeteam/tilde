@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import Entities.Packet;
-import Entities.PacketFields;
+import models.Packet;
+import models.PacketFields;
 
 public class WindowedWekaPacketWriter extends WekaPacketWriter {
 

@@ -1,4 +1,4 @@
-package Entities;
+package models;
 
 
 public enum PacketFields {

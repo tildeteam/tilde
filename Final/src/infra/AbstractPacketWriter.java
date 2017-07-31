@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-import Entities.Packet;
+import models.Packet;
 
 public abstract class AbstractPacketWriter extends Writer {
 

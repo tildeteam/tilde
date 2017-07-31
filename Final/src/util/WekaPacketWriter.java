@@ -5,9 +5,9 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import Entities.Packet;
-import Entities.PacketFields;
 import infra.AbstractPacketWriter;
+import models.Packet;
+import models.PacketFields;
 
 public class WekaPacketWriter extends AbstractPacketWriter {
 
