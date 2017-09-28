@@ -5,14 +5,8 @@
 
 """
 TODO:
-2. DONE: fix custom weights output file
-3. DONE: optimize matrix copy on column slice (per CSi)
-4. document usage
-5. support test mode pipelining
-6. DONE: add user-input asserts
-7. DONE: log and count singular matrices issues
-8. usage templates
-9. DONE: support reiterating train mode data to retrain weights
+1. positive/negative learn option?
+2. multiprocessing ?
 """
 __version__ = "1.2"
 
@@ -23,21 +17,21 @@ import json
 import logging
 import math
 import numpy as np
-from multiprocessing import Pool
-from itertools import count
+import multiprocessing as mp
 from enum import Enum
 import time
 
 # default constants
 NON_COMPUTABLE = 0
 FEATURE_DELIMITER = ','
-PEARSON_THRESHOLD_DEFAULT = 0.75
-WINDOW_SIZE_DEFAULT = 30
-LEARN_RATE_DEFAULT = 0.15
+PEARSON_THRESHOLD_DEFAULT = 0.825
+WINDOW_SIZE_DEFAULT = 100
+LEARN_RATE_DEFAULT = 0.2
 DEFAULT_WEIGHT_OUTPUT_LOCATION = "sliding_window_classifier_weights.json"
-DEBUG_PRINTS_DEFAULT = True
+DEBUG_PRINTS_DEFAULT = False
 APPROXIMATE_SINGULAR_MATRIX_DEFAULT = False
 ITERATIONS_NUM_OF_DEFAULT = 1
+SPLIT_DATA_TO_ROWS = 2000
 
 # enums
 PEARSON_THRESHOLD_MIN = 0
@@ -65,9 +59,13 @@ class SlidingWindow(object):
         self.window_size = window_size
         self.pearson_threshold = pearson_threshold
         self.feature_weights = feature_weights
+
         self.input_file = input_file
         self.approximate = approximate
         self.window = []
+        # shm variables
+        self.task_queue_in = None
+        self.task_queue_out = None
         # statistics
         self.singular_matrices_num_of = 0
         self.fp_num_of = 0
@@ -75,15 +73,23 @@ class SlidingWindow(object):
         self.fn_num_of = 0
         self.tn_num_of = 0
 
-        logging.basicConfig(filename="sliding_window.log", level=logging.DEBUG if debug else logging.INFO, filemode="w")
+        logging.basicConfig(filename="sliding_window_w{0}_p{1}_{2}.log".format(self.window_size, self.pearson_threshold, "no_approximation" if not self.approximate else "approximation"), level=logging.DEBUG, filemode="w")
         self.logger = logging.getLogger("Sliding Window")
-        self.logger.addHandler(logging.StreamHandler(sys.stdout))
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(logging.DEBUG if debug else logging.INFO)
+        self.logger.addHandler(handler)
         self.logger.info("Sliding window init")
 
     @staticmethod
     def average(x):
+        """
+
+        :param x: 1-d numpy array
+        :type x: np.array
+        :return:
+        """
         assert len(x) > 0
-        return float(sum(x)) / len(x)
+        return np.average(x)
 
     @staticmethod
     def pearson_def(x, y):
@@ -136,31 +142,25 @@ class SlidingWindow(object):
             self.singular_matrices_num_of += 1  # collect statistics regardless of approximation mode
             if not approximate:
                 return NON_COMPUTABLE
-        inv_cov_mat = np.linalg.pinv(cov_m_mat)
+            inv_cov_mat = np.linalg.pinv(cov_m_mat)
         m_vec = np.matrix(vec) if not isinstance(vec, np.matrixlib.defmatrix.matrix) else vec
         means = m_mat.mean(axis=0)
         d_from_centroid = m_vec - means
         return np.nan_to_num(np.sqrt((d_from_centroid.dot(inv_cov_mat).dot(d_from_centroid.transpose())).item()))
 
-    def _get_copy_of_window_relate_mode(self):
-        # last attr is considered the class
-        return [row[:-1] for row in self.window] if self.mode == MODE_TRAIN else self.window[:]
-
     def _build_correlation_sets(self):
-        # transpose matrix (cols is a transposed COPY of window)
-        cols = list(zip(count(), zip(*self._get_copy_of_window_relate_mode())))
+        corr_mat = np.nan_to_num(np.corrcoef(self.window.T))
         assigned_cols = set()  # keeps track of already assigned cols, so finish at len(assigned_cols) == len(cols)
         cs = []
-        for i, feature_i in cols:
+        for i in range(len(corr_mat)):
             if i in assigned_cols:
                 continue
             cs.append(list())
             cs[-1].append(i)
             assigned_cols.add(i)
-            # skip iteration of self to self pearson calculation
-            # skip iteration of already assigned cols
-            for j, feature_j in filter(lambda tup_i_feature: tup_i_feature[0] not in assigned_cols, cols):
-                if abs(SlidingWindow.pearson_def(feature_i, feature_j)) >= self.pearson_threshold:
+            # corr_mat is symmetric -> iterate upper half
+            for j in filter(lambda ix: ix not in assigned_cols, range(i + 1, len(corr_mat))): #TODO check whether filter is needed
+                if abs(corr_mat[i][j]) >= self.pearson_threshold:
                     cs[-1].append(j)
                     assigned_cols.add(j)
             if len(cs[-1]) > 1:  # log only relevant correlation sets
@@ -168,26 +168,32 @@ class SlidingWindow(object):
         self.logger.info("Number of correlation sets: {0}. Largest set size: {1}. Smallest set size: {2}".
                          format(len(cs), max(map(lambda s: len(s), cs)), min(map(lambda s: len(s), cs))))
         self.logger.debug("Correlation sets (with more than 1 element): {0}".format(
-            list(filter(lambda cs_i: len(cs_i) > 1, cs))))
-
+                    list(filter(lambda cs_i: len(cs_i) > 1, cs))))
         # remove correlation sets of len 1
         return list(filter(lambda cs_i: len(cs_i) > 1, cs))
 
     def _build_correlation_sets_thresholds(self, cs):
-        window = self._get_copy_of_window_relate_mode()
         ts = []
+        # instead of deleting vec_j in each iteration, mask it out of the array (slice the np.Array)
+        row_mask = np.ones((self.window_size,), bool)
+        # each cs_i's max M.D. is calculated by a different worker
+        # requirements:
+        # 1. window in shm as mp.RawArray(c_double, sizeof(window))
+        # 2. CSs in shm as mp.Manager.list
+        # 3. idx is the only thing sent to the mp.Queue
         for i, cs_i in enumerate(cs):
             if len(cs_i) <= 1:
                 # skip CSi if number of attributes monitored <= 1 (calculation of M.D. of dim(1) is irrelevant)
                 continue
             max_md = -1
             for j in range(self.window_size):
+                row_mask[j] = False  # mask vec_j
                 # remove vec j and slice cols according to CSi
-                window_without_vec_j = np.delete(np.matrix(window)[:, cs_i], j, axis=0)
-                # TODO: assert window[j] is available and not removed (deep copy has been done?)
+                window_without_vec_j = self.window[row_mask, :][:, cs_i]
                 # vec_j with sliced cols according to CSi
-                vec_j = np.matrix(window[j])[:, cs_i]
+                vec_j = self.window[j, cs_i]
                 max_md = max(self.mahalanobis_distance(vec_j, window_without_vec_j), max_md)
+                row_mask[j] = True  # unmask vec_j for next iteration
             ts.append((i, max_md))
             self.logger.debug("Correlation set {0}'s threshold: {1}".format(i, max_md))
         self.logger.info("Correlation sets' thresholds: {0}".format(ts))
@@ -216,14 +222,30 @@ class SlidingWindow(object):
         if self.mode == MODE_TEST or self.feature_weights.cs:
             self.logger.info("Pretrained weights: {0}".format(self.feature_weights.cs))
 
+        #self.logger.info("Spawning {0} workers".format(10))
+
+        #from contextlib import closing
+        #with closing(mp.Pool(processes=10, initializer=_initalizer, initargs=(self.window,
+        #                                                                     self.task_queue_in,
+        #                                                                      self.task_queue_out))) as #pool:
+        #    #pool.map(None, None)
+        #    pass
+        #pool.join()
+
+
         with open(self.input_file, 'r') as input_stream:
             # -- fill the window first --
             for i, v in enumerate(input_stream):
                 if i == self.window_size:
                     break
-                self.window.append(list(map(lambda x: int(x), v.split(FEATURE_DELIMITER))))
+                #v = v.split(FEATURE_DELIMITER) if self.mode == MODE_TEST else v.split(FEATURE_DELIMITER)[:-1]
+                v = v.split(FEATURE_DELIMITER)[:-1]
+                self.window.append(list(map(lambda x: int(x), v)))
             else:  # did not break - input file too small for window
                 return SlidingWindowStatus.WINDOW_SIZE_DOES_NOT_MEET_REQUIREMENTS
+
+            # from now on, window will be treated as np.array
+            self.window = np.asarray(self.window)
             # -- build correlation sets and thresholds on filled window --
             # note that sets and thresholds are already filtered to > sets of len 1
             # to remove redundant M.D calculation
@@ -236,13 +258,18 @@ class SlidingWindow(object):
             # continue such that the new instance replaces the first instance (self.window[0])
             # and next, build the new TS and CS.
             for ix, v in enumerate(input_stream, start=self.window_size):
-                new_vec = list(map(lambda x: int(x), v.split(FEATURE_DELIMITER)))
-                new_vec_mat = np.matrix(new_vec)
-                window_mat = np.matrix(self.window)
+                start_time = time.time()
+                tmp_v = v.split(FEATURE_DELIMITER)
+                v = tmp_v[:-1]
+                v_class = int(tmp_v[-1])
+
+                new_vec = np.array(list(map(lambda x: int(x), v)))
                 declared_as_anomaly = False
-                # calc M.D per CSi. on singular matrices we skip the anomaly testing and slide the window
+                # calc M.D per CSi. on singular matrices we skip the anomaly testing
                 for cs_i, (i, ts_i) in zip(cs, ts):
-                    md_on_cs_i = self.mahalanobis_distance(new_vec_mat[:, cs_i], window_mat[:, cs_i])
+                    if ts_i == 0:
+                        continue					
+                    md_on_cs_i = self.mahalanobis_distance(new_vec[cs_i], self.window[:, cs_i])
                     self.logger.debug("ix: {0}. Calculated M.D. {1} of CS ix {2} with threshold {3}".
                                       format(ix, md_on_cs_i, i, ts_i))
                     if md_on_cs_i == NON_COMPUTABLE:
@@ -261,51 +288,54 @@ class SlidingWindow(object):
                         if self.mode == MODE_TRAIN:
                             # TP -> train with positive value (1), otherwise we consider the classification as:
                             # FP -> train with negative value (-1)
-                            classification = "TP" if new_vec[-1] == 1 else "FP"
-                            self.feature_weights.set_weight_of(cs_i,
-                                                               self.feature_weights.get_weight_of(cs_i) +
-                                                               self.learn_rate * (-1 if classification == "TP" else 1))
-                            self.logger.critical("ix: {0} Anomaly is evaluated as {1}. Updating weights of"
-                                                 " CS ix {2} to: {3}".
-                                                 format(ix, classification, i,
-                                                        self.feature_weights.get_weight_of(cs_i)))
+                            classification = "TP" if v_class == 1 else "FP"
+                            if classification == "FP":
+							    self.feature_weights.set_weight_of(cs_i,
+																   self.feature_weights.get_weight_of(cs_i) +
+																   self.learn_rate * (-1 if classification == "TP" else 1))
+							    self.logger.critical("ix: {0} Anomaly is evaluated as {1}. Updating weights of"
+													 " CS ix {2} to: {3}".
+													 format(ix, classification, i,
+															self.feature_weights.get_weight_of(cs_i)))
                     elif self.mode == MODE_TRAIN:
                         # TN -> train with positive value(1), otherwise we consider the classification as:
                         # FN -> train with negative value (-1)
-                        classification = "FN" if new_vec[-1] == 1 else "TN"
-                        self.feature_weights.set_weight_of(cs_i,
-                                                           self.feature_weights.get_weight_of(cs_i) +
-                                                           self.learn_rate * (1 if classification == "TN" else -1))
-                        self.logger.critical("ix: {0} Anomaly is evaluated as {1}. Updating weights of"
-                                             " CS ix {2} to: {3}".
-                                             format(ix, classification, i,
-                                                    self.feature_weights.get_weight_of(cs_i)))
+                        classification = "FN" if v_class == 1 else "TN"
+                        if classification == "FN":
+							self.feature_weights.set_weight_of(cs_i,
+															   self.feature_weights.get_weight_of(cs_i) +
+															   self.learn_rate * (1 if classification == "TN" else -1))
+							self.logger.critical("ix: {0} Anomaly is evaluated as {1}. Updating weights of"
+												 " CS ix {2} to: {3}".
+												 format(ix, classification, i,
+														self.feature_weights.get_weight_of(cs_i)))
                 # -- collect statistics overall on all CSets (only in train mode we have the class attribute) --
-                if self.mode == MODE_TRAIN:
+                if self.mode == MODE_TEST or self.mode == MODE_TRAIN:
                     if declared_as_anomaly:
-                        if new_vec[-1] == 1:  # TP
+                        if v_class == 1:  # TP
                             self.tp_num_of += 1
                         else:  # FP
                             self.fp_num_of += 1
                     else:
-                        if new_vec[-1] == 1:  # FN
+                        if v_class == 1:  # FN
                             self.fn_num_of += 1
                             self.logger.critical("ix: {0} was skipped but is a true anomaly (FN)".format(ix))
                         else:  # TN
                             self.tn_num_of += 1
 
                 # slide the window - note that window size at all times leaks up to 1*sizeof(instance)
-                self.window.append(new_vec)
-                self.window.pop(0)
+                self.window = np.vstack((self.window, new_vec))
+                self.window = self.window[1:]
                 # recalculate cs, ts based on the new window
                 cs, ts = self.trainer()
+                self.logger.info("Iteration: {0} took {1:.2f}s".format(ix, time.time() - start_time))
             if self.mode == MODE_TRAIN:
                 self.logger.info("Saving weights to output file")
                 self.feature_weights.save()
             # -- statistics --
-            self.logger.debug("\n\n********** Statistics ********** ")
-            self.logger.debug("Number of singular matrices calculations: {0}".format(self.singular_matrices_num_of))
-            self.logger.debug("TP/FP/TN/FN: {0}/{1}/{2}/{3}".format(self.tp_num_of, self.fp_num_of,
+            self.logger.info("\n\n********** Statistics ********** ")
+            self.logger.info("Number of singular matrices calculations: {0}".format(self.singular_matrices_num_of))
+            self.logger.info("TP/FP/TN/FN: {0}/{1}/{2}/{3}".format(self.tp_num_of, self.fp_num_of,
                                                                     self.tn_num_of, self.fn_num_of))
             # cleanup - TODO: move to cleanup function
             for handler in self.logger.handlers:
@@ -341,7 +371,7 @@ class FeatureWeights(object):
 
     def save(self):
         with open(self.output_file, 'w') as f:
-            json.dump(self.cs, f)
+            json.dump(self.cs, f, indent=4)
 
     def get_weight_of(self, cs, default=1):
         tup = list(filter(lambda i: i["feature_indices"] == cs, self.cs))
@@ -363,6 +393,16 @@ class FeatureWeights(object):
         return 0
 
 
+def _initalizer(window, task_queue_in, task_queue_out):
+    # shm variables as global in contexts of sub-processes
+    global shared_window
+    global inq
+    global outq
+    shared_window = window
+    inq = task_queue_in
+    outq = task_queue_out
+
+
 def main():
     opt_parse()
 
@@ -372,6 +412,16 @@ def opt_parse():
                             formatter_class=RawTextHelpFormatter,
                             description="""
 Sliding window classifier
+Templates:
+
+    Run train mode on your data with default values:
+        %(prog)s train -o weights.json
+
+    Run in 100 iterations, while feeding and training the same weights (using default values):
+        First iteration (to create the initial weights file you need to run this, or create a weights file manually):
+            %(prog)s train -o weights.json
+        Other 99 iterations:
+            %(prog)s train -t weights.json -o weights.json -i 99
 """)
     parser.add_argument('parameters', type=str, nargs=2, help='[{modes}] [input file]'.
                         format(modes="|".join(AVAILABLE_MODES)))
@@ -451,7 +501,7 @@ Pre-trained weights JSON file. format:
                            input_file=input_file)
         start_time = time.time()
         status = sw.run()
-        sw.logger.debug("Total runtime(iteration {1}): {0:.2f}s".format(time.time() - start_time, i+1))
+        sw.logger.info("Total runtime(iteration {1}): {0:.2f}s".format(time.time() - start_time, i+1))
 
     # TODO: IS THERE A NEED FOR BELOW?
     if status == SlidingWindowStatus.WINDOW_SIZE_DOES_NOT_MEET_REQUIREMENTS:
