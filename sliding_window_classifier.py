@@ -503,14 +503,5 @@ Pre-trained weights JSON file. format:
         status = sw.run()
         sw.logger.info("Total runtime(iteration {1}): {0:.2f}s".format(time.time() - start_time, i+1))
 
-    # TODO: IS THERE A NEED FOR BELOW?
-    if status == SlidingWindowStatus.WINDOW_SIZE_DOES_NOT_MEET_REQUIREMENTS:
-        sw.logger.critical("Requested window size: {0} is too large for input file provided".format(args.window_size))
-        sys.exit(SlidingWindowStatus.WINDOW_SIZE_DOES_NOT_MEET_REQUIREMENTS.value)
-    elif status == SlidingWindowStatus.ANOMALY_FOUND:
-        sw.logger.critical("Found anomaly")
-        sys.exit(SlidingWindowStatus.ANOMALY_FOUND.value)
-    sys.exit(SlidingWindowStatus.ANOMALY_NOT_FOUND.value)
-
 if __name__ == "__main__":
     main()
